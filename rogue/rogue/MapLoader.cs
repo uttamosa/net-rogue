@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿using Newtonsoft.Json;
+using System.IO;
+using System.Text.Json.Nodes;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace rogue
 {
@@ -23,7 +26,18 @@ namespace rogue
 
         public Map LoadMapFromFile(string filename)
         {
-            string[] lines = File.ReadAllLines();
+            bool exists = File.Exists(filename);
+            if (exists == false)
+            {
+                Console.WriteLine($"File {filename} not found");
+                return LoadTestMap(); // Return the test map as fallback
+            }
+
+            string fileContents = File.ReadAllText(filename);
+
+            Map loadedmap = JsonConvert.DeserializeObject<Map>(fileContents);
+            
+            return loadedmap;
         }
     }
 }

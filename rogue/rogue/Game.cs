@@ -66,7 +66,7 @@ namespace rogue
             }
 
             MapLoader loader = new MapLoader();
-            Map level01 = loader.LoadTestMap();
+            Map level01 = loader.LoadMapFromFile("maps/mapfile");
 
             // Draw the player
             Console.SetCursorPosition((int)player.position.X, (int)player.position.Y);
