@@ -4,7 +4,19 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("nojuu");
+            bool again = true;
+            
+            while (again)
+            {
+                Game rogue = new Game();
+                rogue.Run();
+
+                Console.WriteLine("uudestaan? Y/N");
+                if (Console.ReadLine() == "N")
+                {
+                    again = false;
+                }
+            }
         }
     }
 }
