@@ -21,6 +21,7 @@ namespace rogue
         public string? nimi;
         public Race rotu;
         public Class hahmoluokka;
+        public int taso = 1;
 
         public Vector2 position;
 

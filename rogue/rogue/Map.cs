@@ -13,16 +13,6 @@ namespace rogue
 
         public void draw()
         {
-            mapWidth = 8;
-            mapTiles = new int[] {
-                2, 2, 2, 2, 2, 2, 2, 2,
-                2, 1, 1, 2, 1, 1, 1, 2,
-                2, 1, 1, 2, 1, 1, 1, 2,
-                2, 1, 1, 1, 1, 1, 2, 2,
-                2, 2, 2, 2, 1, 1, 1, 2,
-                2, 1, 1, 1, 1, 1, 1, 2,
-                2, 2, 2, 2, 2, 2, 2, 2 };
-
             Console.ForegroundColor = ConsoleColor.Gray; // Change to map color
             int mapHeight = mapTiles.Length / mapWidth; // Calculate the height: the amount of rows
             for (int y = 0; y < mapHeight; y++) // for each row
@@ -41,6 +31,9 @@ namespace rogue
                             break;
                         case 2:
                             Console.Write("#"); // Wall
+                            break;
+                        case 3:
+                            Console.Write("="); // Wall
                             break;
                         default:
                             Console.Write(" ");

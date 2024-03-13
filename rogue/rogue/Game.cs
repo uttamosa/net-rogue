@@ -7,7 +7,7 @@ namespace rogue
         public void Run()
         {
             PlayerCharacter player = new PlayerCharacter();
-
+            
             player.position = new Vector2(1, 1);
 
             while (true)
@@ -66,13 +66,16 @@ namespace rogue
             }
 
             MapLoader loader = new MapLoader();
-            Map level01 = loader.LoadMapFromFile("maps/mapfile");
+            Map level = loader.LoadMapFromFile($"maps/level{player.taso}.json");
 
             // Draw the player
             Console.SetCursorPosition((int)player.position.X, (int)player.position.Y);
             Console.Clear();
-            level01.draw();
+            level.draw();
             Console.Write("@");
+
+            Console.SetCursorPosition(16, 8);
+            Console.Write($"taso {player.taso}");
 
             while (true)
             {
@@ -100,21 +103,28 @@ namespace rogue
                 }
                 
                 //check wall collision
-                int indeksi = ((int)player.position.X + moveX) + ((int)player.position.Y + moveY) * level01.mapWidth;
-                int numero = level01.mapTiles[indeksi];
+                int indeksi = ((int)player.position.X + moveX) + ((int)player.position.Y + moveY) * level.mapWidth;
+                int numero = level.mapTiles[indeksi];
 
                 if (numero == 1) 
                 {
                     player.move(moveX, moveY);
                 }
-                // Move the player
+                if (numero == 3)
+                {
+                    player.taso += 1;
+                    level = loader.LoadMapFromFile($"maps/level{player.taso}.json");
 
-                // -----------Draw:
-                // Clear the screen so that player appears only in one place
+                    player.position.X = 1;
+                    player.position.Y = 1;
+                }
                 Console.Clear();
-                level01.draw();
+                level.draw();
                 Console.SetCursorPosition((int)player.position.X, (int)player.position.Y);
                 Console.Write("@");
+
+                Console.SetCursorPosition(16, 8);
+                Console.Write($"taso {player.taso}");
             }
         }
     }
