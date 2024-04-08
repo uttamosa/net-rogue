@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using ZeroElectric.Vinculum;
 
 namespace rogue
 {
@@ -14,6 +15,7 @@ namespace rogue
     { 
 
     }
+
     internal class PlayerCharacter
     {
         public string? nimi;
@@ -24,8 +26,16 @@ namespace rogue
         public Vector2 position;
 
         char image;
-        ConsoleColor drawColor;
+        Color color = Raylib.GREEN;
 
+        public void Draw()
+        {
+            int pixelX = (int)(position.X * Game.tileSize);
+            int pixelY = (int)(position.Y * Game.tileSize);
+
+            Raylib.DrawRectangle(pixelX, pixelY, Game.tileSize, Game.tileSize, color);
+            Raylib.DrawText("@", pixelX, pixelY, Game.tileSize, Raylib.BLACK);
+        }
         public void move(int moveX, int moveY)
         {
             position.X += moveX;
