@@ -11,13 +11,29 @@ namespace rogue
         public MapLoader loader = new MapLoader();
         public static readonly int tileSize = 32;
 
+        int screen_width = 1280;
+        int screen_height = 720;
+
+        int game_width;
+        int game_height;
+        RenderTexture game_screen;
+
         private void Init()
         {
             player = CreateCharacter();
             player.position = new Vector2(1, 1);
             level = loader.LoadMapFromFile($"maps/level{player.taso}.json");
 
-            Raylib.InitWindow(800, 800, "rogue");
+            Raylib.InitWindow(screen_width, screen_height, "rogue");
+            Raylib.SetWindowState(ConfigFlags.FLAG_WINDOW_RESIZABLE);
+
+            game_width = 480;
+            game_height = 270;
+
+            game_screen = Raylib.LoadRenderTexture(game_width, game_height);
+
+            Raylib.SetTextureFilter(game_screen.texture, TextureFilter.TEXTURE_FILTER_BILINEAR);
+            Raylib.SetWindowMinSize(game_width, game_height);
             Raylib.SetTargetFPS(30);
         }
 
@@ -93,9 +109,10 @@ namespace rogue
 
         public void Run()
         {
-            Console.Clear();
             Init();
             gameloop();
+            Raylib.CloseWindow();
+            Raylib.UnloadRenderTexture(game_screen);
         }
         private void DrawGame()
         {
