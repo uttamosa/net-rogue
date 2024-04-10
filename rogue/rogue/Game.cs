@@ -27,8 +27,8 @@ namespace rogue
             Raylib.InitWindow(screen_width, screen_height, "rogue");
             Raylib.SetWindowState(ConfigFlags.FLAG_WINDOW_RESIZABLE);
 
-            game_width = 480;
-            game_height = 270;
+            game_width = 1280;
+            game_height = 720;
 
             game_screen = Raylib.LoadRenderTexture(game_width, game_height);
 
@@ -114,6 +114,48 @@ namespace rogue
             Raylib.CloseWindow();
             Raylib.UnloadRenderTexture(game_screen);
         }
+
+        private void DrawGameToTexture()
+        {
+            // Kaikki piirtäminen tehdään tekstuuriin eikä suoraan ruudulle
+            Raylib.BeginTextureMode(game_screen);
+            // Kaikki pelin piirtäminen tapahtuu tässä välissä
+            DrawGame();
+            Raylib.EndTextureMode();
+            DrawGameScaled();
+
+        }
+
+        private void DrawGameScaled()
+        {
+
+            // Tässä piirretään tekstuuri ruudulle
+            Raylib.BeginDrawing();
+            Raylib.ClearBackground(Raylib.DARKGRAY);
+
+            int draw_width = Raylib.GetScreenWidth();
+            int draw_height = Raylib.GetScreenHeight();
+            float scale = Math.Min((float)draw_width / game_width, (float)draw_height / game_height);
+
+            // Note: when drawing on texture, the Y-axis is
+            //flipped, need to multiply height by -1
+            Rectangle source = new Rectangle(0.0f, 0.0f,
+                game_screen.texture.width,
+                game_screen.texture.height * -1.0f);
+
+            Rectangle destination = new Rectangle(
+                (draw_width - (float)game_width * scale) * 0.5f,
+                (draw_height - (float)game_height * scale) * 0.5f,
+                game_width * scale,
+                game_height * scale);
+
+            Raylib.DrawTexturePro(game_screen.texture,
+                source, destination,
+                new Vector2(0, 0), 0.0f, Raylib.WHITE);
+
+            Raylib.EndDrawing();
+        }
+
         private void DrawGame()
         {
             Raylib.BeginDrawing();
@@ -172,8 +214,8 @@ namespace rogue
         {
             while (true)
             {
-                DrawGame();
                 UpdateGame();
+                DrawGameToTexture();
             }
         }
     }
