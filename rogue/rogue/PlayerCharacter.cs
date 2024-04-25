@@ -25,15 +25,25 @@ namespace rogue
 
         public Vector2 position;
 
-        char image;
+        Texture image;
         Color color = Raylib.GREEN;
+
+        int imagePixelX;
+        int imagePixelY;
+
+        public void SetImageAndIndex(Texture atlasImage, int imagesPerRow, int index)
+        {
+            image = atlasImage;
+            imagePixelX = (index % imagesPerRow) * Game.tileSize;
+            imagePixelY = (int)(index / imagesPerRow) * Game.tileSize;
+        }
 
         public void Draw()
         {
             int pixelX = (int)(position.X * Game.tileSize);
             int pixelY = (int)(position.Y * Game.tileSize);
 
-            Raylib.DrawRectangle(pixelX, pixelY, Game.tileSize, Game.tileSize, color);
+            Raylib.dra
             Raylib.DrawText("@", pixelX, pixelY, Game.tileSize, Raylib.BLACK);
         }
         public void move(int moveX, int moveY)
