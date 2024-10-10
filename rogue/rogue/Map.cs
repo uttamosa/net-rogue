@@ -1,48 +1,189 @@
-﻿using ZeroElectric.Vinculum;
+﻿using System;
+using System.Numerics;
+using ZeroElectric.Vinculum;
 
 namespace rogue
 {
-    internal class Map
+    public enum MapTile : int
     {
+        Floor = 0,
+        Wall = 638
+    }
+
+    public class Map
+    {
+        List<enemy> enemies;
+        List<item> items;
+
         public int mapWidth;
-        public int[] mapTiles;
+        public int mapHeight;
+        public MapLayer[] layers;
+        public static List<int> WallTileNumbers = new List<int> { 638 };
 
-        public void draw()
+        
+
+        public Map()
         {
-            Console.ForegroundColor = ConsoleColor.Gray; // Change to map color
-            int mapHeight = mapTiles.Length / mapWidth; // Calculate the height: the amount of rows
-
-            for (int y = 0; y < mapHeight; y++) // for each row
+            mapWidth = 1;
+            mapHeight = 1;
+            layers = new MapLayer[3];
+            for (int i = 0; i < layers.Length; i++)
             {
-                for (int x = 0; x < mapWidth; x++) // for each column in the row
+                layers[i] = new MapLayer(mapWidth * mapHeight);
+            }
+            enemies = new List<enemy>() { };
+            items = new List<item>() { };
+        }
+        public string GetEnemyName(int spriteIndex)
+        {
+            switch (spriteIndex)
+            {
+                case 108: return "Ghost";
+                case 109: return "Cyclops";
+                default: return "Unknown";
+            }
+        }
+        public MapTile GetTileAt(int x, int y)
+        {
+            // Calculate index: index = x + y * mapWidth
+            int indexInMap = x + y * mapWidth;
+
+            // Use the index to get a map tile from map's array
+            MapLayer groundLayer = GetLayer("ground");
+            int[] mapTiles = groundLayer.mapTiles;
+            int tileId = mapTiles[indexInMap];
+
+            if (WallTileNumbers.Contains(tileId))
+            {
+                // Is a wall
+                return MapTile.Wall;
+            }
+            else
+            {
+                // One of the floortiles
+                return MapTile.Floor;
+            }
+        }
+
+        public MapLayer GetLayer(string layerName)  
+        {
+            for (int i = 0; i < layers.Length; i++)
+            {
+                if (layers[i].name == layerName)
                 {
-                    int index = x + y * mapWidth; // Calculate index of tile at (x, y)
-                    int tileId = mapTiles[index]; // Read the tile value at index
+                    return layers[i];
+                }
+            }
+            Console.WriteLine($"Error: No layer with name: {layerName}");
+            return null; // Wanted layer was not found!
+        }
 
-                    Color color = Raylib.GRAY;
-                    int pixelX = x * Game.tileSize;
-                    int pixelY = y * Game.tileSize;
+        public void LoadEnemiesAndItems(Texture spriteAtlas)
+        {
+            enemies = new List<enemy>();
 
-                    // Draw the tile graphics
-                    Console.SetCursorPosition(x, y);
+
+            MapLayer enemyLayer = GetLayer("enemies");
+
+            int[] enemyTiles = enemyLayer.mapTiles;
+            int mapHeight = enemyTiles.Length / mapWidth;
+            for (int y = 0; y < mapHeight; y++)
+            {
+                for (int x = 0; x < mapWidth; x++)
+                {
+                    // Laske paikka valmiiksi
+                    Vector2 position = new Vector2(x, y);
+
+                    int index = x + y * mapWidth;
+                    int tileId = enemyTiles[index];
                     switch (tileId)
                     {
+                        case 0:
+                            // Tässä kohdassa kenttää ei ole vihollista
+                            break;
+                        case 1:
+                            // Tässä kohdassa kenttää on örkki
+                            // tileId on sama kuin drawIndex
+                            enemies.Add(new enemy("goblin", position, spriteAtlas, tileId));
+                            break;
                         case 2:
-                            Raylib.DrawRectangle(pixelX, pixelY, Game.tileSize, Game.tileSize, color);
-                            Raylib.DrawText("#", pixelX, pixelY, Game.tileSize, Raylib.WHITE);
-                            break;
-                        case 3:
-                            Raylib.DrawRectangle(pixelX, pixelY, Game.tileSize, Game.tileSize, color);
-                            Raylib.DrawText("=", pixelX, pixelY, Game.tileSize, Raylib.VIOLET);
-                            break;
-                        default:
-                            Raylib.DrawRectangle(pixelX, pixelY, Game.tileSize, Game.tileSize, color);
-                            Raylib.DrawText("#", pixelX, pixelY, Game.tileSize, Raylib.GRAY);
+                            // jne...
                             break;
                     }
                 }
             }
+            items = new List<item>();
+            MapLayer itemLayer = GetLayer("items");
+            int[] itemTiles = enemyLayer.mapTiles;
 
+            for (int y = 0; y < mapHeight; y++)
+            {
+                for (int x = 0; x < mapWidth; x++)
+                {
+                    // Laske paikka valmiiksi
+                    Vector2 position = new Vector2(x, y);
+
+                    int index = x + y * mapWidth;
+                    int tileId = enemyTiles[index];
+                    switch (tileId)
+                    {
+                        case 0:
+                            // Tässä kohdassa kenttää ei ole vihollista
+                            break;
+                        case 1:
+                            // Tässä kohdassa kenttää on örkki
+                            // tileId on sama kuin drawIndex
+                            items.Add(new item("´potion", position, spriteAtlas, tileId));
+                            break;
+                        case 2:
+                            // jne...
+                            break;
+                    }
+                }
+            }
+        }
+        public Vector2 GetSpritePosition(int spriteIndex, int spritesPerRow)
+        {
+            float spritePixelX = spriteIndex % spritesPerRow * Game.tileSize;
+            float spritePixelY = spriteIndex / spritesPerRow * Game.tileSize;
+            return new Vector2(spritePixelX, spritePixelY);
+        }
+        public void draw()
+        {
+            Texture image = Raylib.LoadTexture("images/colored-transparent_packed.png");
+            Vector2 spriteposition;
+            MapLayer groundLayer = GetLayer("ground");
+            int[] mapTiles = groundLayer.mapTiles;
+
+            Console.ForegroundColor = ConsoleColor.DarkGray; // Change to map color
+            int mapHeight = mapTiles.Length / mapWidth; // Calculate the height: the amount of rows
+
+            Rectangle source;
+            for (int y = 0; y < mapHeight; y++)
+            {
+                for (int x = 0; x < mapWidth; x++)
+                {
+                    int tileId = mapTiles[x + y * mapWidth];
+
+                    int spriteId = tileId;
+                    spriteposition = GetSpritePosition(spriteId, 50);
+
+                    source = new Rectangle(spriteposition.X, spriteposition.Y, Game.tileSize, Game.tileSize);
+                    Vector2 position = new Vector2(x * Game.tileSize, y * Game.tileSize);
+                    Raylib.DrawTextureRec(image, source, position, Raylib.WHITE);
+                }
+            }
+
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                enemy currentEnemy = enemies[i];
+                currentEnemy.draw();
+            }
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                item currentitem = items[i];
+                currentitem.draw();
+            }
         }
     }
 }

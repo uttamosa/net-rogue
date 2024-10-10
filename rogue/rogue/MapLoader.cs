@@ -1,39 +1,51 @@
-﻿using Newtonsoft.Json;
+﻿using TurboMapReader;
 
 namespace rogue
 {
     internal class MapLoader
     {
-        public Map LoadTestMap()
+        public static Map CreateMapFromFile(TiledMap map)
         {
-            Map test = new Map();
-            test.mapWidth = 8;
+            TurboMapReader.MapLayer groundlayer = map.GetLayerByName("ground");
+            TurboMapReader.MapLayer enemyLayer = map.GetLayerByName("enemies");
+            TurboMapReader.MapLayer itemLayer = map.GetLayerByName("items");
 
-            test.mapTiles = new int[] {
-                2, 2, 2, 2, 2, 2, 2, 2,
-                2, 1, 1, 1, 1, 1, 1, 2,
-                2, 1, 1, 1, 1, 1, 1, 2,
-                2, 1, 1, 1, 1, 1, 1, 2,
-                2, 1, 1, 1, 1, 1, 1, 2,
-                2, 1, 1, 1, 1, 1, 3, 2,
-                2, 2, 2, 2, 2, 2, 2, 2
-            };
-            return test;
+            Map roguemap = new Map();
+
+            int levelwidth = groundlayer.width;
+            roguemap.mapWidth = levelwidth;
+            int howManyTiles = groundlayer.data.Length;
+            int[] groundTiles = groundlayer.data;
+
+            MapLayer myGroundLayer = new MapLayer(howManyTiles);
+            myGroundLayer.name = "ground";
+            myGroundLayer.mapTiles = groundTiles;
+
+            int[] enemyTiles = enemyLayer.data;
+
+            MapLayer myEnemyLayer = new MapLayer(howManyTiles);
+            myEnemyLayer.name = "enemies";
+            myEnemyLayer.mapTiles = enemyTiles;
+
+            int[] itemTiles = itemLayer.data;
+
+            MapLayer myItemLayer = new MapLayer(howManyTiles);
+            myItemLayer.name = "items";
+            myItemLayer.mapTiles = itemTiles;
+
+            roguemap.layers[0] = myGroundLayer;
+            roguemap.layers[1] = myEnemyLayer;
+            roguemap.layers[2] = myItemLayer;
+
+            return roguemap;
         }
 
         public Map LoadMapFromFile(string filename)
         {
-            bool exists = File.Exists(filename);
-            if (exists == false)
-            {
-                Console.WriteLine($"File {filename} not found");
-                return LoadTestMap(); // Return the test map as fallback
-            }
-
-            string fileContents = File.ReadAllText(filename);
-
-            Map loadedmap = JsonConvert.DeserializeObject<Map>(fileContents);
-            
+            TiledMap loadedTileMap = MapReader.LoadMapFromFile(filename);
+        
+            Map loadedmap = CreateMapFromFile(loadedTileMap);
+        
             return loadedmap;
         }
     }

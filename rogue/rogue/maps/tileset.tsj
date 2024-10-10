@@ -1,0 +1,14 @@
+{ "columns":49,
+ "image":"..\/RogueGrafiikat\/colored-transparent_packed.png",
+ "imageheight":352,
+ "imagewidth":784,
+ "margin":0,
+ "name":"tileset",
+ "spacing":0,
+ "tilecount":1078,
+ "tiledversion":"1.10.1",
+ "tileheight":16,
+ "tilewidth":16,
+ "type":"tileset",
+ "version":"1.10"
+}

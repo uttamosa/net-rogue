@@ -1,15 +1,24 @@
-﻿using System.Data;
-using System.Numerics;
+﻿using System.Numerics;
 using ZeroElectric.Vinculum;
+using TurboMapReader;
 
 namespace rogue
 {
+
     class Game
     {
+        enum GameState
+        {
+            MainMenu,
+            GameLoop
+        }
+
+        GameState currentGameState;
+
         public PlayerCharacter player;
         public Map level;
         public MapLoader loader = new MapLoader();
-        public static readonly int tileSize = 32;
+        public static readonly int tileSize = 16;
 
         int screen_width = 1280;
         int screen_height = 720;
@@ -20,21 +29,27 @@ namespace rogue
 
         private void Init()
         {
+            MapLoader loader = new MapLoader();
+            currentGameState = GameState.MainMenu;
             player = CreateCharacter();
             player.position = new Vector2(1, 1);
-            level = loader.LoadMapFromFile($"maps/level{player.taso}.json");
+            level = loader.LoadMapFromFile($"maps/level{player.taso}.tmj");
 
             Raylib.InitWindow(screen_width, screen_height, "rogue");
             Raylib.SetWindowState(ConfigFlags.FLAG_WINDOW_RESIZABLE);
+            DrawMainMenu();
+            Texture image = Raylib.LoadTexture("images/colored-transparent_packed.png");
+            level.LoadEnemiesAndItems(image);
 
-            game_width = 1280;
-            game_height = 720;
+            game_width = 440;
+            game_height = 440;
 
             game_screen = Raylib.LoadRenderTexture(game_width, game_height);
 
-            Raylib.SetTextureFilter(game_screen.texture, TextureFilter.TEXTURE_FILTER_BILINEAR);
+            Raylib.SetTextureFilter(game_screen.texture, TextureFilter.TEXTURE_FILTER_POINT);
             Raylib.SetWindowMinSize(game_width, game_height);
             Raylib.SetTargetFPS(30);
+            player.SetImageAndIndex(image, 49, 25);
         }
 
         private string AskName()
@@ -123,9 +138,29 @@ namespace rogue
             DrawGame();
             Raylib.EndTextureMode();
             DrawGameScaled();
-
         }
+        public void DrawMainMenu()
+        {
+            // Tyhjennä ruutu ja aloita piirtäminen
+            Raylib.BeginDrawing();
+            Raylib.ClearBackground(Raylib.BLACK);
 
+            // Laske ylimmän napin paikka ruudulla.
+            int button_width = 100;
+            int button_height = 20;
+            int button_x = Raylib.GetScreenWidth() / 2 - button_width / 2;
+            int button_y = Raylib.GetScreenHeight() / 2 - button_height / 2;
+
+            // Piirrä pelin nimi nappien yläpuolelle
+            RayGui.GuiLabel(new Rectangle(button_x, button_y - button_height * 2, button_width, button_height), "Rogue");
+            
+            Raylib.EndDrawing();
+
+            if (RayGui.GuiButton(new Rectangle(button_x, button_y, button_width, button_height), "Start Game") == 1)
+            {
+                currentGameState = GameState.GameLoop;
+            }
+        }
         private void DrawGameScaled()
         {
 
@@ -155,67 +190,61 @@ namespace rogue
 
             Raylib.EndDrawing();
         }
-
         private void DrawGame()
         {
-            Raylib.BeginDrawing();
-            Console.Clear();
             level.draw();
             player.Draw();
-            Raylib.EndDrawing();
         }
-
         private void UpdateGame()
         {
-            if (Console.KeyAvailable == false)
-            {
-                // No input: Sleep for 33 ms and return.
-                System.Threading.Thread.Sleep(33);
-                return;
-            }
-
             int moveX = 0;
             int moveY = 0;
 
-            ConsoleKeyInfo key = Console.ReadKey();
-            switch (key.Key)
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_UP))
             {
-                case ConsoleKey.UpArrow:
-                    moveY = -1; break;
-
-                case ConsoleKey.DownArrow:
-                    moveY = 1; break;
-
-                case ConsoleKey.LeftArrow:
-                    moveX = -1; break;
-
-                case ConsoleKey.RightArrow:
-                    moveX = 1; break;
+                moveY = -1;
+            }
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_DOWN))
+            {
+                moveY = 1;
+            }
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_LEFT))
+            {
+                moveX = -1;
+            }
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_RIGHT))
+            {
+                moveX = 1;
             }
 
-            int indeksi = ((int)player.position.X + moveX) + ((int)player.position.Y + moveY) * level.mapWidth;
-            int numero = level.mapTiles[indeksi];
+            int playernewx = (int)player.position.X + moveX;
+            int playernewy = (int)player.position.Y + moveY;
+            
 
-            if (numero == 1)
+            MapTile maptileindex = level.GetTileAt(playernewx, playernewy);
+            if (maptileindex == MapTile.Floor)
             {
                 player.move(moveX, moveY);
             }
-            if (numero == 3)
-            {
-                player.taso += 1;
-                level = loader.LoadMapFromFile($"maps/level{player.taso}.json");
-
-                player.position.X = 1;
-                player.position.Y = 1;
-            }
         }
-
         private void gameloop()
         {
             while (true)
             {
-                UpdateGame();
-                DrawGameToTexture();
+                while (Raylib.WindowShouldClose() == false)
+                {
+                    switch (currentGameState)
+                    {
+                        case GameState.MainMenu:
+                            DrawMainMenu();
+                            break;
+
+                        case GameState.GameLoop:
+                            UpdateGame();
+                            DrawGameToTexture();
+                            break;
+                    }
+                }
             }
         }
     }

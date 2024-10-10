@@ -16,7 +16,7 @@ namespace rogue
 
     }
 
-    internal class PlayerCharacter
+    public class PlayerCharacter
     {
         public string? nimi;
         public Race rotu;
@@ -25,7 +25,7 @@ namespace rogue
 
         public Vector2 position;
 
-        Texture image;
+        public Texture image;
         Color color = Raylib.GREEN;
 
         int imagePixelX;
@@ -35,7 +35,7 @@ namespace rogue
         {
             image = atlasImage;
             imagePixelX = (index % imagesPerRow) * Game.tileSize;
-            imagePixelY = (int)(index / imagesPerRow) * Game.tileSize;
+            imagePixelY = (index / imagesPerRow) * Game.tileSize;
         }
 
         public void Draw()
@@ -43,14 +43,17 @@ namespace rogue
             int pixelX = (int)(position.X * Game.tileSize);
             int pixelY = (int)(position.Y * Game.tileSize);
 
-            Raylib.dra
-            Raylib.DrawText("@", pixelX, pixelY, Game.tileSize, Raylib.BLACK);
+            Rectangle homma1 = new Rectangle(imagePixelX, imagePixelY, Game.tileSize, Game.tileSize);
+            Rectangle homma2 = new Rectangle(pixelX, pixelY, Game.tileSize, Game.tileSize);
+            Vector2 origin = new Vector2(0, 0);
+
+            Raylib.DrawTexturePro(image, homma1, homma2, origin, 0, Raylib.WHITE);
         }
         public void move(int moveX, int moveY)
         {
             position.X += moveX;
             position.Y += moveY;
-            // Prevent player from going outside screen
+
             if (position.X < 0)
             {
                 position.X = 0;
