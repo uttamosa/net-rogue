@@ -150,7 +150,6 @@ namespace rogue
         }
         public void draw()
         {
-            Texture image = Raylib.LoadTexture("images/colored-transparent_packed.png");
             Vector2 spriteposition;
             MapLayer groundLayer = GetLayer("ground");
             int[] mapTiles = groundLayer.mapTiles;
@@ -166,11 +165,12 @@ namespace rogue
                     int tileId = mapTiles[x + y * mapWidth];
 
                     int spriteId = tileId;
-                    spriteposition = GetSpritePosition(spriteId, 50);
+                    int spriteIndex = spriteId;
+                    spriteposition = GetSpritePosition(spriteIndex, 50);
 
                     source = new Rectangle(spriteposition.X, spriteposition.Y, Game.tileSize, Game.tileSize);
                     Vector2 position = new Vector2(x * Game.tileSize, y * Game.tileSize);
-                    Raylib.DrawTextureRec(image, source, position, Raylib.WHITE);
+                    Raylib.DrawTextureRec(Game.Image, source, position, Raylib.WHITE);
                 }
             }
 

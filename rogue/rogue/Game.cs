@@ -27,6 +27,8 @@ namespace rogue
         int game_height;
         RenderTexture game_screen;
 
+        public static Texture Image;
+
         private void Init()
         {
             MapLoader loader = new MapLoader();
@@ -38,8 +40,10 @@ namespace rogue
             Raylib.InitWindow(screen_width, screen_height, "rogue");
             Raylib.SetWindowState(ConfigFlags.FLAG_WINDOW_RESIZABLE);
             DrawMainMenu();
-            Texture image = Raylib.LoadTexture("images/colored-transparent_packed.png");
-            level.LoadEnemiesAndItems(image);
+
+            Image = Raylib.LoadTexture("images/colored-transparent_packed.png");
+
+            level.LoadEnemiesAndItems(Image);
 
             game_width = 440;
             game_height = 440;
@@ -49,7 +53,7 @@ namespace rogue
             Raylib.SetTextureFilter(game_screen.texture, TextureFilter.TEXTURE_FILTER_POINT);
             Raylib.SetWindowMinSize(game_width, game_height);
             Raylib.SetTargetFPS(30);
-            player.SetImageAndIndex(image, 49, 25);
+            player.SetImageAndIndex(Image, 49, 25);
         }
 
         private string AskName()
@@ -136,7 +140,9 @@ namespace rogue
             Raylib.BeginTextureMode(game_screen);
             // Kaikki pelin piirtäminen tapahtuu tässä välissä
             DrawGame();
+
             Raylib.EndTextureMode();
+
             DrawGameScaled();
         }
         public void DrawMainMenu()
