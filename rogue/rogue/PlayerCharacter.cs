@@ -43,11 +43,9 @@ namespace rogue
             int pixelX = (int)(position.X * Game.tileSize);
             int pixelY = (int)(position.Y * Game.tileSize);
 
-            Rectangle homma1 = new Rectangle(imagePixelX, imagePixelY, Game.tileSize, Game.tileSize);
-            Rectangle homma2 = new Rectangle(pixelX, pixelY, Game.tileSize, Game.tileSize);
-            Vector2 origin = new Vector2(0, 0);
+            Rectangle sourcerec = new Rectangle(imagePixelX, imagePixelY, Game.tileSize, Game.tileSize);
 
-            Raylib.DrawTexturePro(image, homma1, homma2, origin, 0, Raylib.WHITE);
+            Raylib.DrawTextureRec(image, sourcerec, new Vector2(pixelX, pixelY), Raylib.WHITE);
         }
         public void move(int moveX, int moveY)
         {
