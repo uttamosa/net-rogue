@@ -139,11 +139,17 @@ namespace rogue
             // Kaikki piirtäminen tehdään tekstuuriin eikä suoraan ruudulle
             Raylib.BeginTextureMode(game_screen);
             // Kaikki pelin piirtäminen tapahtuu tässä välissä
+            Raylib.ClearBackground(Raylib.DARKGRAY); //tekee jotain ja peli ei ilman tätä clearaa vanhaa kuvaa
             DrawGame();
 
             Raylib.EndTextureMode();
 
+            Raylib.BeginDrawing();
+            Raylib.ClearBackground(Raylib.DARKGRAY);
+
             DrawGameScaled();
+
+            Raylib.EndDrawing();
         }
         public void DrawMainMenu()
         {
@@ -169,11 +175,6 @@ namespace rogue
         }
         private void DrawGameScaled()
         {
-
-            // Tässä piirretään tekstuuri ruudulle
-            Raylib.BeginDrawing();
-            Raylib.ClearBackground(Raylib.DARKGRAY);
-
             int draw_width = Raylib.GetScreenWidth();
             int draw_height = Raylib.GetScreenHeight();
             float scale = Math.Min((float)draw_width / game_width, (float)draw_height / game_height);
@@ -193,8 +194,6 @@ namespace rogue
             Raylib.DrawTexturePro(game_screen.texture,
                 source, destination,
                 new Vector2(0, 0), 0.0f, Raylib.WHITE);
-
-            Raylib.EndDrawing();
         }
         private void DrawGame()
         {
