@@ -164,6 +164,10 @@ namespace rogue
                     int index = x + y * mapWidth;
                     int spriteId = mapTiles[index];
 
+                    if (spriteId != 0)
+                    {
+                        spriteId -= 1;
+                    }
                     spriteposition = GetSpritePosition(spriteId, 49);
 
                     var source = new Rectangle(spriteposition.X, spriteposition.Y, Game.tileSize, Game.tileSize);
