@@ -120,8 +120,10 @@ namespace rogue
         private PlayerCharacter CreateCharacter()
         {
             PlayerCharacter player = new PlayerCharacter();
-            player.nimi = AskName();
-            player.rotu = AskSpecies();
+            player.nimi = "kalle";
+            player.rotu = Race.human;
+            //player.nimi = AskName();
+            //player.rotu = AskSpecies();
             //player.role = AskRole();
             return player;
         }

@@ -157,18 +157,16 @@ namespace rogue
             Console.ForegroundColor = ConsoleColor.DarkGray; // Change to map color
             int mapHeight = mapTiles.Length / mapWidth; // Calculate the height: the amount of rows
 
-            Rectangle source;
             for (int y = 0; y < mapHeight; y++)
             {
                 for (int x = 0; x < mapWidth; x++)
                 {
-                    int tileId = mapTiles[x + y * mapWidth];
+                    int index = x + y * mapWidth;
+                    int spriteId = mapTiles[index];
 
-                    int spriteId = tileId;
-                    int spriteIndex = spriteId;
-                    spriteposition = GetSpritePosition(spriteIndex, 50);
+                    spriteposition = GetSpritePosition(spriteId, 49);
 
-                    source = new Rectangle(spriteposition.X, spriteposition.Y, Game.tileSize, Game.tileSize);
+                    var source = new Rectangle(spriteposition.X, spriteposition.Y, Game.tileSize, Game.tileSize);
                     Vector2 position = new Vector2(x * Game.tileSize, y * Game.tileSize);
                     Raylib.DrawTextureRec(Game.Image, source, position, Raylib.WHITE);
                 }
