@@ -122,9 +122,11 @@ namespace rogue
             PlayerCharacter player = new PlayerCharacter();
             player.nimi = "kalle";
             player.rotu = Race.human;
+
             //player.nimi = AskName();
             //player.rotu = AskSpecies();
             //player.role = AskRole();
+
             return player;
         }
 
@@ -229,9 +231,20 @@ namespace rogue
             
 
             MapTile maptileindex = level.GetTileAt(playernewx, playernewy);
+            MapTile mapenemyindex = level.GetEnemyAt(playernewx, playernewy);
+            MapTile mapitemindex = level.GetItemAt(playernewx, playernewy);
+            
             if (maptileindex == MapTile.Floor)
             {
                 player.move(moveX, moveY);
+            }
+            if (mapenemyindex == MapTile.goblin)
+            {
+                Console.WriteLine("osuit vihuun");
+            }
+            if (mapitemindex == MapTile.potion)
+            {
+                Console.WriteLine("osuit potioniin");
             }
         }
         private void gameloop()
