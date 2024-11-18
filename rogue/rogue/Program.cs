@@ -11,8 +11,8 @@
                 Game rogue = new Game();
                 rogue.Run();
 
-                Console.WriteLine("uudestaan? Y/N");
-                if (Console.ReadLine() == "N")
+                Console.WriteLine("uudestaan? y/n");
+                if (Console.ReadLine() == "n")
                 {
                     again = false;
                 }

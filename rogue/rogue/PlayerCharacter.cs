@@ -5,22 +5,17 @@ namespace rogue
 {
     public enum Race
     {
-        human,
-        dog,
-        cat,
-        woman
+        Human,
+        Dog,
+        Cat,
+        Woman,
+        Turtle
     }
-
-    public enum Class 
-    { 
-
-    }
-
+    
     public class PlayerCharacter
     {
         public string? nimi;
         public Race rotu;
-        public Class hahmoluokka;
         public int taso = 1;
 
         public Vector2 position;

@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using ZeroElectric.Vinculum;
 using TurboMapReader;
+using RayGuiCreator;
 
 namespace rogue
 {
@@ -10,10 +11,22 @@ namespace rogue
         enum GameState
         {
             MainMenu,
-            GameLoop
+            GameLoop,
+            CharacterCreator,
+            Settings,
+            PauseMenu
+        }
+
+        public enum Difficulty
+        {
+            Easy,
+            Medium,
+            Catastrofic
         }
 
         GameState currentGameState;
+        Difficulty currentDifficulty;
+        public float volume;
 
         public PlayerCharacter player;
         public Map level;
@@ -39,6 +52,7 @@ namespace rogue
 
             Raylib.InitWindow(screen_width, screen_height, "rogue");
             Raylib.SetWindowState(ConfigFlags.FLAG_WINDOW_RESIZABLE);
+            Raylib.SetExitKey(0);
             DrawMainMenu();
 
             Image = Raylib.LoadTexture("images/colored-transparent_packed.png");
@@ -56,76 +70,9 @@ namespace rogue
             player.SetImageAndIndex(Image, 49, 25);
         }
 
-        private string AskName()
-        {
-            while (true)
-            {
-                Console.WriteLine("mikä nimi");
-                string? inputnimi = Console.ReadLine();
-
-                if (inputnimi != null)
-                {
-                    try
-                    {
-                        string nimi = System.Convert.ToString(inputnimi);
-                        return nimi;
-
-                    }
-                    catch (FormatException)
-                    {
-                        Console.WriteLine("väärä");
-                        continue;
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("piti laittaa jotain");
-                    continue;
-                }
-            }
-        }
-        private Race AskSpecies()
-        {
-            while (true)
-            {
-                Console.WriteLine("mikä rotu?");
-                string? inputrotu = Console.ReadLine();
-                if (inputrotu != null)
-                {
-                    if (int.TryParse(inputrotu, out _) != true)
-                    {
-                        try
-                        {
-                            Race race = (Race)System.Enum.Parse(typeof(Race), inputrotu);
-                            Console.WriteLine(race);
-                            return race;
-                        }
-                        catch (ArgumentException)
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine("ei ole sellasta koita uudestaa");
-                            Console.WriteLine();
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("täh");
-                    }
-                }
-            }
-        }
-
-        //private Role AskRole() {}
-
         private PlayerCharacter CreateCharacter()
         {
             PlayerCharacter player = new PlayerCharacter();
-            player.nimi = "kalle";
-            player.rotu = Race.human;
-
-            //player.nimi = AskName();
-            //player.rotu = AskSpecies();
-            //player.role = AskRole();
 
             return player;
         }
@@ -155,28 +102,195 @@ namespace rogue
 
             Raylib.EndDrawing();
         }
+
         public void DrawMainMenu()
         {
-            // Tyhjennä ruutu ja aloita piirtäminen
             Raylib.BeginDrawing();
             Raylib.ClearBackground(Raylib.BLACK);
 
-            // Laske ylimmän napin paikka ruudulla.
-            int button_width = 100;
-            int button_height = 20;
-            int button_x = Raylib.GetScreenWidth() / 2 - button_width / 2;
-            int button_y = Raylib.GetScreenHeight() / 2 - button_height / 2;
+            int menuStartX = 500;
+            int menuStartY = 0;
+            int rowHeight = Raylib.GetScreenHeight() / 30;
+            int menuWidth = Raylib.GetScreenWidth() / 4;
 
-            // Piirrä pelin nimi nappien yläpuolelle
-            RayGui.GuiLabel(new Rectangle(button_x, button_y - button_height * 2, button_width, button_height), "Rogue");
-            
-            Raylib.EndDrawing();
+            MenuCreator creator = new MenuCreator(menuStartX, menuStartY, rowHeight, menuWidth);
 
-            if (RayGui.GuiButton(new Rectangle(button_x, button_y, button_width, button_height), "Start Game") == 1)
+            creator.Label("Main Menu");
+
+            if (creator.Button("Start"))
             {
-                currentGameState = GameState.GameLoop;
+                currentGameState = GameState.CharacterCreator;
+            }
+
+            if (creator.Button("Quit"))
+            {
+                Raylib.CloseWindow();
+                Environment.Exit(1);
+            }
+
+            Raylib.EndDrawing();
+        }
+
+        public void DrawCharacterCreationMenu()
+        {
+            // List of possible difficulty choices. The indexing starts at 0
+            MultipleChoiceEntry difficultyDropDown = new MultipleChoiceEntry(
+                new string[] { "Easy", "Medium", "Catastrophic" });
+
+            // List of possible class choices.
+            MultipleChoiceEntry RaceChoices = new MultipleChoiceEntry(
+                new string[] { "Human", "Dog", "Cat", "Woman", "Turtle" });
+
+            // Volume value is modified by the volume slider
+            float volume = 1.0f;
+
+            // Textbox data for player's name
+            TextBoxEntry playerNameEntry = new TextBoxEntry(15);
+
+            while (true)
+            {
+                Raylib.BeginDrawing();
+                Raylib.ClearBackground(Raylib.BLACK);
+
+                int width = Raylib.GetScreenWidth() / 2;
+
+                // Fit 22 rows on the screen
+                int rows = 30;
+                int rowHeight = Raylib.GetScreenHeight() / rows;
+
+                // Center the menu horizontally
+                int x = (Raylib.GetScreenWidth() / 2) - (width / 2);
+
+                // Center the menu vertically
+                int y = (Raylib.GetScreenHeight() - (rowHeight * rows)) / 2;
+
+                // 3 pixels between rows, text 3 pixels smaller than row height
+                MenuCreator c = new MenuCreator(x, y, rowHeight, width, 3, -3);
+                c.Label("Main menu");
+
+                c.Label("Player name");
+                c.TextBox(playerNameEntry);
+
+                c.Label("Character race");
+                c.DropDown(RaceChoices);
+
+                c.Label("Volume");
+                c.Slider("quiet", "LOUD", ref volume, 0.0f, 1.0f);
+
+                c.Label("Difficulty toggle");
+                c.DropDown(difficultyDropDown);
+
+
+                if (c.Button("Finish"))
+                {
+                    player.nimi = playerNameEntry.ToString();
+                    player.rotu = (Race)Enum.Parse(typeof(Race), RaceChoices.GetEntryAt(0));
+                    currentDifficulty = (Difficulty)Enum.Parse(typeof(Difficulty), difficultyDropDown.GetEntryAt(0));
+
+                    currentGameState = GameState.GameLoop;
+                    break;
+                }
+                // Draws open dropdowns over other menu items
+                int menuHeight = c.EndMenu();
+
+                // Draws a rectangle around the menu
+                int padding = 2;
+                Raylib.DrawRectangleLines(
+                    x - padding,
+                    y - padding,
+                    width + padding * 2,
+                    menuHeight + padding * 2,
+                    MenuCreator.GetLineColor());
+                Raylib.EndDrawing();
             }
         }
+
+        public void DrawSettings()
+        {
+            while (true)
+            {
+                Raylib.BeginDrawing();
+                Raylib.ClearBackground(Raylib.BLACK);
+
+                int width = Raylib.GetScreenWidth() / 2;
+                int rows = 30;
+                int rowHeight = Raylib.GetScreenHeight() / rows;
+                int x = (Raylib.GetScreenWidth() / 2) - (width / 2);
+                int y = (Raylib.GetScreenHeight() - (rowHeight * rows)) / 2;
+
+                MenuCreator c = new MenuCreator(x, y, rowHeight, width, 3, -3);
+
+                c.Label("Volume");
+                c.Slider("quiet", "LOUD", ref volume, 0.0f, 1.0f);
+
+                if (c.Button("Finish"))
+                {
+                    Console.WriteLine(volume);
+                    currentGameState = GameState.PauseMenu;
+                    break;
+                }
+
+                int menuHeight = c.EndMenu();
+
+                int padding = 2;
+                Raylib.DrawRectangleLines(
+                    x - padding,
+                    y - padding,
+                    width + padding * 2,
+                    menuHeight + padding * 2,
+                    MenuCreator.GetLineColor());
+                Raylib.EndDrawing();
+            }
+        }
+
+        public void DrawPauseMenu()
+        {
+            while (true)
+            {
+                Raylib.BeginDrawing();
+                Raylib.ClearBackground(Raylib.BLACK);
+
+                int width = Raylib.GetScreenWidth() / 2;
+                int rows = 30;
+                int rowHeight = Raylib.GetScreenHeight() / rows;
+                int x = (Raylib.GetScreenWidth() / 2) - (width / 2);
+                int y = (Raylib.GetScreenHeight() - (rowHeight * rows)) / 2;
+
+                MenuCreator c = new MenuCreator(x, y, rowHeight, width, 3, -3);
+
+                if (c.Button("Continue"))
+                {
+                    currentGameState = GameState.GameLoop;
+                    break;
+                }
+
+                if (c.Button("Settings"))
+                {
+                    currentGameState = GameState.Settings;
+                    break;
+                }
+
+                c.Label("");
+
+                if (c.Button("Quit"))
+                {
+                    currentGameState = GameState.MainMenu;
+                    break;
+                }
+
+                int menuHeight = c.EndMenu();
+
+                int padding = 5;
+                Raylib.DrawRectangleLines(
+                    x - padding,
+                    y - padding,
+                    width + padding * 2,
+                    menuHeight + padding * 2,
+                    MenuCreator.GetLineColor());
+                Raylib.EndDrawing();
+            }
+        }
+
         private void DrawGameScaled()
         {
             int draw_width = Raylib.GetScreenWidth();
@@ -199,31 +313,37 @@ namespace rogue
                 source, destination,
                 new Vector2(0, 0), 0.0f, Raylib.WHITE);
         }
+
         private void DrawGame()
         {
             level.draw();
             player.Draw();
         }
+
         private void UpdateGame()
         {
             int moveX = 0;
             int moveY = 0;
 
-            if (Raylib.IsKeyPressed(KeyboardKey.KEY_UP))
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_W))
             {
                 moveY = -1;
             }
-            if (Raylib.IsKeyPressed(KeyboardKey.KEY_DOWN))
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_S))
             {
                 moveY = 1;
             }
-            if (Raylib.IsKeyPressed(KeyboardKey.KEY_LEFT))
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_A))
             {
                 moveX = -1;
             }
-            if (Raylib.IsKeyPressed(KeyboardKey.KEY_RIGHT))
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_D))
             {
                 moveX = 1;
+            }
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_ESCAPE))
+            {
+                currentGameState = GameState.PauseMenu;
             }
 
             int playernewx = (int)player.position.X + moveX;
@@ -247,6 +367,7 @@ namespace rogue
                 Console.WriteLine("osuit potioniin");
             }
         }
+
         private void gameloop()
         {
             while (true)
@@ -260,10 +381,26 @@ namespace rogue
                             break;
 
                         case GameState.GameLoop:
-                            UpdateGame();
                             DrawGameToTexture();
+                            UpdateGame();
+                            break;
+
+                        case GameState.CharacterCreator:
+                            DrawCharacterCreationMenu();
+                            break;
+
+                        case GameState.Settings:
+                            DrawSettings();
+                            break;
+
+                        case GameState.PauseMenu:
+                            DrawPauseMenu();
                             break;
                     }
+                }
+                if (Raylib.WindowShouldClose() == true)
+                {
+                    Raylib.CloseWindow();
                 }
             }
         }
