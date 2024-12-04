@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TurboMapReader", "..\..\net
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RayGuiCreator", "..\..\net-rogue-guicreator\RayGuiCreator\RayGuiCreator\RayGuiCreator.csproj", "{C7D9CB7E-C9E2-451F-B7FF-870A7F19A562}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnemyEditor", "EnemyEditor\EnemyEditor.csproj", "{4B231C43-0B48-407C-A193-E829627E01FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{C7D9CB7E-C9E2-451F-B7FF-870A7F19A562}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7D9CB7E-C9E2-451F-B7FF-870A7F19A562}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7D9CB7E-C9E2-451F-B7FF-870A7F19A562}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B231C43-0B48-407C-A193-E829627E01FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B231C43-0B48-407C-A193-E829627E01FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B231C43-0B48-407C-A193-E829627E01FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B231C43-0B48-407C-A193-E829627E01FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

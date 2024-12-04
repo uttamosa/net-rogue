@@ -1,0 +1,9 @@
+{
+    "Enemies": {
+        "Enemy1": {
+            "Name": "moi",
+            "SpriteId":  123,
+            "Hp": 1
+        }
+    }
+}

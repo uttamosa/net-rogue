@@ -3,7 +3,7 @@ using ZeroElectric.Vinculum;
 
 namespace rogue
 {
-    internal class enemy
+    public class enemy
     {
         public string name;       // Vihollisen nimi
         public Vector2 position;  // Missä vihollinen on kentässä
