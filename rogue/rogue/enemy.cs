@@ -6,17 +6,19 @@ namespace rogue
     public class enemy
     {
         public string name;       // Vihollisen nimi
-        public Vector2 position;  // Missä vihollinen on kentässä
-        public Texture graphics; // Viittaus kuvaan jossa vihollisen kuva on
-        public int DrawIndex;    // Missä kohdassa kuvaa vihollinen on
+        public int hp;
+        public int DrawIndex;    // kuva id
 
-        public enemy(string name, Vector2 position, Texture graphics, int drawIndex)
+        public enemy(string name, int hp, int drawIndex)
         {
             this.name = name;
-            this.position = position;
-            this.graphics = graphics;
+            this.hp = hp;
             DrawIndex = drawIndex;
         }
 
+        public override string ToString()
+        {
+            return $"Enemy: {name} HP:{hp}";
+        }
     }
 }

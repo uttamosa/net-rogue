@@ -1,9 +1,1 @@
-{
-    "Enemies": {
-        "Enemy1": {
-            "Name": "moi",
-            "SpriteId":  123,
-            "Hp": 1
-        }
-    }
-}
+[{"name":"iii\r\n","hp":999,"DrawIndex":999},{"name":"123","hp":999,"DrawIndex":999},{"name":"123","hp":999,"DrawIndex":1}]

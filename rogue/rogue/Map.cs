@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Numerics;
 using ZeroElectric.Vinculum;
 
@@ -142,7 +143,7 @@ namespace rogue
                         case 128:
                             // Tässä kohdassa kenttää on örkki
                             // tileId on sama kuin drawIndex
-                            enemies.Add(new enemy("goblin", position, spriteAtlas, tileId));
+                            //enemies.Add(new enemy("goblin", position, spriteAtlas, tileId));
                             break;
                     }
                 }
@@ -182,6 +183,26 @@ namespace rogue
             return new Vector2(spritePixelX, spritePixelY);
         }
 
+        List<enemy> enemyTypes;
+        StreamReader? fileReader;
+        public void LoadEnemyTypes(string filename)
+        {
+            enemyTypes = new List<enemy>();
+
+            // TODO: Tarkista että tiedosto on olemassa.
+            if (File.Exists("..\\Enemies.json"))
+            {
+                fileReader = new StreamReader(filename);
+                // TODO: Lue tiedoston sisältö samalla tavalla kuin
+                // kentän lataamisessa.
+                string fileContents = fileReader.ReadToEnd();
+
+                // TODO: Käytä NewtonSoft.JSON kirjastoa ja muuta tiedoston
+                // sisältö List<Enemy> muotoon
+                enemyTypes = JsonConvert.DeserializeObject<List<enemy>>(fileContents);
+            }
+        }
+        
         public void draw()
         {
             Vector2 spriteposition;
@@ -213,13 +234,13 @@ namespace rogue
             for (int i = 0; i < enemies.Count; i++)
             {
                 enemy currentEnemy = enemies[i];
-                Vector2 enemyPosition = currentEnemy.position;
+                //Vector2 enemyPosition = currentEnemy.position;
                 int enemySpriteIndex = currentEnemy.DrawIndex;
 
                 Vector2 enemySpritePosition = GetSpritePosition(enemySpriteIndex, 49);
                 var enemyspriterec = new Rectangle(enemySpritePosition.X, enemySpritePosition.Y, Game.tileSize, Game.tileSize);
                 
-                Raylib.DrawTextureRec(currentEnemy.graphics, enemyspriterec, enemyPosition * 16, Raylib.WHITE);
+                //Raylib.DrawTextureRec(currentEnemy.graphics, enemyspriterec, enemyPosition * 16, Raylib.WHITE);
             }
             for (int i = 0; i < items.Count; i++)
             {

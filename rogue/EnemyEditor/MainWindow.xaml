@@ -13,7 +13,7 @@
         </Grid.ColumnDefinitions>
         <Label Content="Enemies&#xD;&#xA;" Height="NaN" Width="81" Margin="-781,36,0,374" HorizontalAlignment="Left"/>
         <Label Content="Information&#xD;&#xA;" HorizontalAlignment="Left" Margin="-440,36,0,0" VerticalAlignment="Top"/>
-        <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" Margin="-781,74,453,24" RenderTransformOrigin="0.5,0.5" Height="NaN" Width="NaN">
+        <ListBox x:Name="itemlist" d:ItemsSource="{d:SampleData ItemCount=10}" Margin="-781,74,453,47" RenderTransformOrigin="0.5,0.5" Height="NaN" Width="NaN" SelectionChanged="ListBox_SelectionChanged">
             <ListBox.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -24,12 +24,14 @@
             </ListBox.RenderTransform>
         </ListBox>
         <Label Content="Hitpoints&#xD;&#xA;&#xD;&#xA;" HorizontalAlignment="Left" Margin="-423,194,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Margin="-381,218,0,0" TextWrapping="Wrap" Text="...&#xD;&#xA;" VerticalAlignment="Top" Width="173" TextChanged="TextBox_TextChanged" Height="18"/>
+        <TextBox x:Name="input3" HorizontalAlignment="Left" Margin="-381,218,0,0" TextWrapping="Wrap" Text="&#xD;&#xA;" VerticalAlignment="Top" Width="173" TextChanged="TextBox_TextChanged" Height="18"/>
         <Label Content="Name&#xA;" HorizontalAlignment="Left" Margin="-423,78,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Margin="-381,102,0,0" TextWrapping="Wrap" Text="...&#xA;" VerticalAlignment="Top" Width="173" TextChanged="TextBox_TextChanged" Height="18"/>
+        <TextBox x:Name="input1" HorizontalAlignment="Left" Margin="-381,102,0,0" TextWrapping="Wrap" Text="&#xD;&#xA;" VerticalAlignment="Top" Width="173" TextChanged="TextBox_TextChanged" Height="18"/>
         <Label Content="Sprite id&#xD;&#xA;&#xA;" HorizontalAlignment="Left" Margin="-423,135,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Margin="-381,159,0,0" TextWrapping="Wrap" Text="...&#xA;" VerticalAlignment="Top" Width="173" TextChanged="TextBox_TextChanged" Height="18"/>
-        <Button Content="Save&#xD;&#xA;" HorizontalAlignment="Left" Margin="-353,266,0,0" VerticalAlignment="Top" Click="Button_Click" Height="25" Width="72"/>
+        <TextBox x:Name="input2" HorizontalAlignment="Left" Margin="-381,159,0,0" TextWrapping="Wrap" Text="&#xD;&#xA;" VerticalAlignment="Top" Width="173" TextChanged="TextBox_TextChanged" Height="18"/>
+        <Button x:Name="save" Content="Save&#xD;&#xA;" HorizontalAlignment="Left" Margin="-353,266,0,0" VerticalAlignment="Top" Click="AddEnemyToList" Height="25" Width="72"/>
+        <Button x:Name="savejson" Content="save to json&#xD;&#xA;" HorizontalAlignment="Left" Margin="-314,375,0,0" VerticalAlignment="Top" Height="21" Click="SaveEnemiesToJSON"/>
+        <Label x:Name="errorlabel" Content="Error" HorizontalAlignment="Left" Margin="-778,386,0,0" VerticalAlignment="Top" Height="24" Width="327"/>
 
     </Grid>
 </Window>
