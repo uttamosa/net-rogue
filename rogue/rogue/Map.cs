@@ -39,8 +39,12 @@ namespace rogue
             enemies = new List<enemy>() { };
             items = new List<item>() { };
         }
-        //???
 
+        /// <summary>
+        ///  find the name of the enemy via spriteindex
+        /// </summary>
+        /// <param name="spriteIndex"></param>
+        /// <returns>enemy name as string</returns>
         public string GetEnemyName(int spriteIndex)
         {
             switch (spriteIndex)
@@ -51,6 +55,12 @@ namespace rogue
             }
         }
 
+        /// <summary>
+        /// finds what tile is at x,y coordinates
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns>MapTile</returns>
         public MapTile GetTileAt(int x, int y)
         {
             // Calculate index: index = x + y * mapWidth
@@ -71,6 +81,12 @@ namespace rogue
             }
         }
 
+        /// <summary>
+        /// finds what enemytile is at x,y coordinates
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns>enemy as MapTile</returns>
         public MapTile GetEnemyAt(int x, int y)
         {
             int indexInMap = x + y * mapWidth;
@@ -88,6 +104,12 @@ namespace rogue
             }
         }
 
+        /// <summary>
+        /// finds what item is at x,y coordinates
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns>item as MapTile</returns>
         public MapTile GetItemAt(int x, int y)
         {
             int indexInMap = x + y * mapWidth;
@@ -105,6 +127,11 @@ namespace rogue
             }
         }
 
+        /// <summary>
+        /// gets layer by string mane
+        /// </summary>
+        /// <param name="layerName"></param>
+        /// <returns>layer</returns>
         public MapLayer GetLayer(string layerName)  
         {
             for (int i = 0; i < layers.Length; i++)
@@ -117,6 +144,7 @@ namespace rogue
             Console.WriteLine($"Error: No layer with name: {layerName}");
             return null; // Wanted layer was not found!
         }
+
 
         public void LoadEnemiesAndItems(Texture spriteAtlas)
         {
@@ -185,6 +213,7 @@ namespace rogue
 
         List<enemy> enemyTypes;
         StreamReader? fileReader;
+
         public void LoadEnemyTypes(string filename)
         {
             enemyTypes = new List<enemy>();
@@ -203,6 +232,9 @@ namespace rogue
             }
         }
         
+        /// <summary>
+        /// draws
+        /// </summary>
         public void draw()
         {
             Vector2 spriteposition;
